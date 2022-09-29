@@ -32,10 +32,8 @@ jobs:
 
       - name: Don't bump version
         if: ${{ contains(steps.PR.outputs.pr_labels, 'nobump') }}
-        env:
-          PR_LABEL: ${{ steps.PR.outputs.pr_labels }}
         run: |
-          echo "PR labels are ${PR_LABEL}"
+          echo "PR labels are ${{ steps.PR.outputs.pr_labels }}"
           echo "Detected NOBUMP label"
 
       - name: Automated Version Bump
@@ -53,9 +51,7 @@ jobs:
 
       - name: Print new tag
         if: ${{ steps.version-bump.outcome == 'success' }}
-        env:
-          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "New tag is $NEW_TAG"
+        run: echo "New tag is ${{ steps.version-bump.outputs.newTag }}"
 
       - uses: actions/setup-node@v3
         if: ${{ steps.version-bump.outcome == 'success' }}
