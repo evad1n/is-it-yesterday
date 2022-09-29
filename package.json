@@ -1,6 +1,6 @@
 {
     "name": "is-it-yesterday",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Probably not",
     "main": "src/index.js",
     "scripts": {
