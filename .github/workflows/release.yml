@@ -30,17 +30,18 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: TEST
-        if: success() && steps.PR.outputs.number
+      - name: Don't bump version
+        if: ${{ contains(steps.PR.outputs.pr_labels, 'nobump') }}
         env:
-          prLabel: ${{ steps.PR.outputs.pr_labels }}
+          PR_LABEL: ${{ steps.PR.outputs.pr_labels }}
         run: |
-          echo "Your LABELS ARE ${prLabel}"
+          echo "PR labels are ${PR_LABEL}"
+          echo "Detected NOBUMP label"
 
       - name: Automated Version Bump
         id: version-bump
         if: ${{ !contains(steps.PR.outputs.pr_labels, 'nobump') }}
-        uses: "phips28/gh-action-bump-version@master"
+        uses: phips28/gh-action-bump-version@v9
         with:
           tag-prefix: "v"
           version-type: ${{ inputs.bumpType }}
