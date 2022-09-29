@@ -17,26 +17,48 @@ on:
 
 jobs:
   release:
-    name: "Bump Version on master"
+    name: Auto bump version
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Checkout source code"
-        uses: "actions/checkout@v2"
+      - name: Checkout source code
+        uses: "actions/checkout@v3"
         with:
           ref: ${{ github.ref }}
+
+      - name: Get PR info
+        uses: 8BitJonny/gh-get-current-pr@1.4.0
+        id: PR
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        if: success() && steps.PR.outputs.number
+        run: |
+          echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
+          echo "Your LABELS ARE ${prLabel}""
+        env:
+          prNumber: ${{ steps.PR.outputs.number }}
+          # JSON object with the full PR object
+          prJSON: ${{ steps.PR.outputs.pr }}
+          # Direct access to common PR properties
+          prUrl: ${{ steps.PR.outputs.pr_url }}
+          prTitle: ${{ steps.PR.outputs.pr_title }}
+          prBody: ${{ steps.PR.outputs.pr_body }}
+          prCreatedAt: ${{ steps.PR.outputs.pr_created_at }}
+          prMergedAt: ${{ steps.PR.outputs.pr_merged_at }}
+          prClosedAt: ${{ steps.PR.outputs.pr_closed_at }}
+          prLabel: ${{ steps.PR.outputs.pr_labels }}
+
       - name: TEST STUFF
-        run: >
-          echo ${{ github.event.pull_request.title }}
-          echo ${{ github.event.pull_request }}
-          echo ${{ github.event }}
-          echo line4
-          echo line5
+        run: echo PR TITLE IS ${{ steps.PR.outputs.pr_title }}
+
       - name: TEST STUFF
-        run: echo The Title of your PR is ${{ github.event.pull_request.title }}
-      - name: "Automated Version Bump"
+        if: contains(${{ steps.PR.outputs.pr_title }}, 'NOBUMP')
+        run: echo NOBUMP DETECTED
+
+      - name: Automated Version Bump
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
+        if: contains(${{ steps.PR.outputs.pr_title }}, 'NOBUMP')
         with:
           tag-prefix: "v"
           version-type: ${{ inputs.bumpType }}
