@@ -22,9 +22,7 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: "actions/checkout@v3"
-        with:
-          ref: ${{ github.ref }}
+        uses: actions/checkout@v3
 
       - name: Get PR info
         uses: 8BitJonny/gh-get-current-pr@1.4.0
@@ -50,17 +48,10 @@ jobs:
           echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
           echo "Your LABELS ARE ${prLabel}"
 
-      - name: TEST STUFF
-        run: echo PR TITLE IS ${{ steps.PR.outputs.pr_title }}
-
-      - name: TEST STUFF
-        if: contains(${{ steps.PR.outputs.pr_title }}, 'NOBUMP')
-        run: echo NOBUMP DETECTED
-
       - name: Automated Version Bump
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
-        if: contains(${{ steps.PR.outputs.pr_title }}, 'NOBUMP')
+        if: "!contains(${{ steps.PR.outputs.pr_labels }}, 'nobump')"
         with:
           tag-prefix: "v"
           version-type: ${{ inputs.bumpType }}
@@ -71,15 +62,21 @@ jobs:
           skip-tag: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: "Output Step"
+
+      - name: Print new tag
+        if: steps.version-bump.outcome == 'success'
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "new tag $NEW_TAG"
+        run: echo "New tag is $NEW_TAG"
+
       - uses: actions/setup-node@v3
+        if: steps.version-bump.outcome == 'success'
         with:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
+
       - name: Publish to NPM
+        if: steps.version-bump.outcome == 'success'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public

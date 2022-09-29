@@ -10,7 +10,9 @@
         "type": "git",
         "url": "git+https://github.com/evad1n/is-it-yesterday.git"
     },
-    "keywords": [],
+    "keywords": [
+        "government"
+    ],
     "author": "",
     "license": "ISC",
     "bugs": {
