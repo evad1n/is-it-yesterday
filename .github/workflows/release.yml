@@ -41,7 +41,7 @@ jobs:
       - name: Automated Version Bump
         id: version-bump
         if: ${{ !contains(steps.PR.outputs.pr_labels, 'nobump') }}
-        uses: phips28/gh-action-bump-version@v9
+        uses: phips28/gh-action-bump-version@v9.0.31
         with:
           tag-prefix: "v"
           version-type: ${{ inputs.bumpType }}
