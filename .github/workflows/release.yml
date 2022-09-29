@@ -31,8 +31,10 @@ jobs:
         id: PR
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        run: echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
         if: success() && steps.PR.outputs.number
+        run: |
+          echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
+          echo "Your LABELS ARE ${prLabel}""
         env:
           prNumber: ${{ steps.PR.outputs.number }}
           # JSON object with the full PR object
