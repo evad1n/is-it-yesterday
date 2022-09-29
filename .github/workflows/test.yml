@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       isItYesterday:
-        description: "Answer the question"
+        description: "Is it yesterday?"
         required: true
         type: boolean
 
