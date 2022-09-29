@@ -43,6 +43,8 @@ jobs:
           patch-wording: "BUMP_PATCH"
           minor-wording: "NUMP_MINOR"
           major-wording: "BUMP_MAJOR"
+          skip-commit: true
+          skip-tag: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Output Step"
