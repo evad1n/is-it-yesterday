@@ -33,50 +33,37 @@ jobs:
       - name: TEST
         if: success() && steps.PR.outputs.number
         env:
-          prNumber: ${{ steps.PR.outputs.number }}
-          # JSON object with the full PR object
-          prJSON: ${{ steps.PR.outputs.pr }}
-          # Direct access to common PR properties
-          prUrl: ${{ steps.PR.outputs.pr_url }}
-          prTitle: ${{ steps.PR.outputs.pr_title }}
-          prBody: ${{ steps.PR.outputs.pr_body }}
-          prCreatedAt: ${{ steps.PR.outputs.pr_created_at }}
-          prMergedAt: ${{ steps.PR.outputs.pr_merged_at }}
-          prClosedAt: ${{ steps.PR.outputs.pr_closed_at }}
           prLabel: ${{ steps.PR.outputs.pr_labels }}
         run: |
-          echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
           echo "Your LABELS ARE ${prLabel}"
 
       - name: Automated Version Bump
         id: version-bump
+        if: ${{ !contains(steps.PR.outputs.pr_labels, 'nobump') }}
         uses: "phips28/gh-action-bump-version@master"
-        if: "!contains(${{ steps.PR.outputs.pr_labels }}, 'nobump')"
         with:
           tag-prefix: "v"
           version-type: ${{ inputs.bumpType }}
           patch-wording: "BUMP_PATCH"
           minor-wording: "NUMP_MINOR"
           major-wording: "BUMP_MAJOR"
-          skip-commit: true
-          skip-tag: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Print new tag
-        if: steps.version-bump.outcome == 'success'
+        if: ${{ steps.version-bump.outcome == 'success' }}
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "New tag is $NEW_TAG"
 
       - uses: actions/setup-node@v3
-        if: steps.version-bump.outcome == 'success'
+        if: ${{ steps.version-bump.outcome == 'success' }}
         with:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish to NPM
-        if: steps.version-bump.outcome == 'success'
+        if: ${{ steps.version-bump.outcome == 'success' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
