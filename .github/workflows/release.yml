@@ -30,6 +30,10 @@ jobs:
           echo ${{ github.event.pull_request.title }}
           echo ${{ github.event.pull_request }}
           echo ${{ github.event }}
+          echo line4
+          echo line5
+      - name: TEST STUFF
+        run: echo The Title of your PR is ${{ github.event.pull_request.title }}
       - name: "Automated Version Bump"
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
