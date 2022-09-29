@@ -1,0 +1,22 @@
+name: Test
+
+on:
+  push:
+  workflow_dispatch:
+    "Is it yesterday?":
+      description: "Answer the question"
+      required: true
+      type: boolean
+
+jobs:
+  Test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+          cache: "yarn"
+      - run: yarn install --frozen-lockfile
+      - run: yarn test
