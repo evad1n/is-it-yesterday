@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - "main"
+  workflow_dispatch:
+    inputs:
+      bumpType:
+        description: "Version bump type?"
+        required: true
+        type: choice
+        options:
+          - "patch"
+          - "minor"
+          - "major"
 
 jobs:
   release:
@@ -22,6 +32,7 @@ jobs:
         uses: "phips28/gh-action-bump-version@master"
         with:
           tag-prefix: "v"
+          version-type: ${{ inputs.bumpType }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
