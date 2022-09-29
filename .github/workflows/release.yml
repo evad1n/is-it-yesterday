@@ -46,6 +46,7 @@ jobs:
           patch-wording: "BUMP_PATCH"
           minor-wording: "NUMP_MINOR"
           major-wording: "BUMP_MAJOR"
+          rc-wording: "BUMP_PRERELEASE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
