@@ -31,10 +31,6 @@ jobs:
         id: PR
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        if: success() && steps.PR.outputs.number
-        run: |
-          echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
-          echo "Your LABELS ARE ${prLabel}""
         env:
           prNumber: ${{ steps.PR.outputs.number }}
           # JSON object with the full PR object
@@ -47,6 +43,12 @@ jobs:
           prMergedAt: ${{ steps.PR.outputs.pr_merged_at }}
           prClosedAt: ${{ steps.PR.outputs.pr_closed_at }}
           prLabel: ${{ steps.PR.outputs.pr_labels }}
+
+      - name: TEST
+        if: success() && steps.PR.outputs.number
+        run: |
+          echo "Your PR is ${prNumber} and its JSON is ${prJSON}"
+          echo "Your LABELS ARE ${prLabel}""
 
       - name: TEST STUFF
         run: echo PR TITLE IS ${{ steps.PR.outputs.pr_title }}
