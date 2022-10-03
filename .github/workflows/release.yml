@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Get PR info
         uses: 8BitJonny/gh-get-current-pr@1.4.0
