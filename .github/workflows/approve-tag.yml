@@ -1,0 +1,54 @@
+name: Tag PR on approval
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  tag:
+    name: Tag PR on approval
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved'
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Print PR info
+        run: echo ${{ toJSON(github.event) }}
+
+      # - name: Don't bump version
+      #   if: ${{ contains(steps.PR.outputs.pr_labels, 'nobump') }}
+      #   run: |
+      #     echo "PR labels are ${{ steps.PR.outputs.pr_labels }}"
+      #     echo "Detected NOBUMP label"
+
+      # - name: Automated Version Bump
+      #   id: version-bump
+      #   if: ${{ !contains(steps.PR.outputs.pr_labels, 'nobump') }}
+      #   uses: phips28/gh-action-bump-version@v9.0.31
+      #   with:
+      #     tag-prefix: "v"
+      #     version-type: ${{ inputs.bumpType }}
+      #     patch-wording: "BUMP_PATCH"
+      #     minor-wording: "NUMP_MINOR"
+      #     major-wording: "BUMP_MAJOR"
+      #     rc-wording: "BUMP_PRERELEASE"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Print new tag
+      #   if: ${{ steps.version-bump.outcome == 'success' }}
+      #   run: echo "New tag is ${{ steps.version-bump.outputs.newTag }}"
+
+      # - uses: actions/setup-node@v3
+      #   if: ${{ steps.version-bump.outcome == 'success' }}
+      #   with:
+      #     node-version: "16.x"
+      #     registry-url: "https://registry.npmjs.org"
+
+      # - name: Publish to NPM
+      #   if: ${{ steps.version-bump.outcome == 'success' }}
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: npm publish --access public
